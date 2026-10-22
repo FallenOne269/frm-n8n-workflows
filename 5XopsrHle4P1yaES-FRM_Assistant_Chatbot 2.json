@@ -1,0 +1,116 @@
+{
+  "name": "FRM Assistant Chatbot",
+  "nodes": [
+    {
+      "id": "1ca612fe-bb2d-44b5-b4ae-296f19f981eb",
+      "name": "Chat",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        112
+      ],
+      "parameters": {
+        "public": false,
+        "options": {
+          "responseMode": "streaming",
+          "inputPlaceholder": "Ask about the FRM project..."
+        }
+      },
+      "webhookId": "66cd8bb9-05f5-4f9a-a505-e941839a6341"
+    },
+    {
+      "id": "b7b9bcf6-ddcf-4c53-9582-928bbc6225c3",
+      "name": "FRM Assistant",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        112
+      ],
+      "parameters": {
+        "promptType": "auto",
+        "options": {
+          "systemMessage": "You are the FRM Assistant, a knowledgeable helper for the Fractal Recursive Mind (FRM) project. The FRM is a theoretical advanced-AI architecture composed of three hierarchical layers: (1) a Neuro-Symbolic Processing layer for symbolic reasoning and knowledge representation, (2) Quantum-Inspired Neural Networks (QINN) for probabilistic and parallel pattern exploration, and (3) a Meta-Cognitive Layer for self-observation, self-optimization, and meta-learning, all coordinated by a fractal governance mechanism. Key application areas discussed in the project include global climate modeling, personalized medicine and drug discovery, urban planning / smart cities, advanced financial modeling, and cybersecurity threat detection. Project success is assessed with probabilistic frameworks: Bayesian inference for module confidence, Markov chains for state-transition probability, probabilistic graphical models for inter-module dependencies, and Monte Carlo simulations for emergent behavior. Answer questions about the FRM architecture, its applications, success metrics, and the probabilistic frameworks clearly and accurately. Be honest about what is theoretical versus implementable: the FRM as described is a conceptual research architecture, not a shippable system. When asked about implementation, distinguish concept from what is realistically buildable today. Keep answers concise, well-structured, and grounded in the project material. If you are unsure, say so rather than inventing details."
+        }
+      }
+    },
+    {
+      "id": "98b24cbb-ab1f-4818-9834-61d499a2630a",
+      "name": "GPT Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        240,
+        336
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "X4nc9G0Ea3yVhR45",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "id": "c7891506-09c9-49a8-bdc7-0ed504df8861",
+      "name": "Conversation Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        368,
+        336
+      ],
+      "parameters": {
+        "sessionIdType": "fromInput",
+        "contextWindowLength": 10
+      }
+    }
+  ],
+  "connections": {
+    "Chat": {
+      "main": [
+        [
+          {
+            "node": "FRM Assistant",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "FRM Assistant",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conversation Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "FRM Assistant",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {},
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": null
+}

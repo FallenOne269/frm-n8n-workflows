@@ -1,0 +1,55 @@
+{
+  "name": "FRM Assistant Error Handler",
+  "nodes": [
+    {
+      "id": "45184713-3f81-407a-8d33-615dbd5043c0",
+      "name": "On Workflow Error",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "e167b405-8f53-4120-82a6-1846b27926c7",
+      "name": "Send Error Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        224,
+        0
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "<__PLACEHOLDER_VALUE__Alert recipient email address__>",
+        "subject": "=[n8n] Workflow error: {{ $json.workflow.name }}",
+        "emailType": "text",
+        "message": "=A workflow execution failed.\n\nWorkflow: {{ $json.workflow.name }} ({{ $json.workflow.id }})\nExecution: {{ $json.execution.id }}\nTime: {{ $json.execution.lastNodeExecuted }}\nError: {{ $json.execution.error.message }}\n\nURL: {{ $json.execution.url }}",
+        "options": {}
+      },
+      "credentials": {},
+      "webhookId": "4f378c0a-6cbe-410c-be44-1d0c55421e81"
+    }
+  ],
+  "connections": {
+    "On Workflow Error": {
+      "main": [
+        [
+          {
+            "node": "Send Error Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {},
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": null
+}

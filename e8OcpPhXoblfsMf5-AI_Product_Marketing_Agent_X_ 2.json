@@ -1,0 +1,177 @@
+{
+  "name": "AI Product Marketing Agent (X)",
+  "nodes": [
+    {
+      "id": "52fa151c-620c-4c46-aa2a-cfd26a24ee32",
+      "name": "Schedule (Mon/Wed/Fri 9am)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        112
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "weeksInterval": 1,
+              "triggerAtDay": [
+                1,
+                3,
+                5
+              ],
+              "triggerAtHour": 9,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "8d541309-3355-4099-a2b2-d6646c6fbead",
+      "name": "Product Details",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        224,
+        112
+      ],
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "product_name",
+              "name": "product_name",
+              "value": "Consonance",
+              "type": "string"
+            },
+            {
+              "id": "product_description",
+              "name": "product_description",
+              "value": "Cli-fi story about the future of humanity and how we deal with ocean acidification",
+              "type": "string"
+            },
+            {
+              "id": "target_audience",
+              "name": "target_audience",
+              "value": "science fiction fans",
+              "type": "string"
+            },
+            {
+              "id": "buy_link",
+              "name": "buy_link",
+              "value": "https://a.co/d/0fD0ogEg",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "a9f9c0ac-c2c3-4e6b-b20e-27b339ebfe38",
+      "name": "Generate Marketing Post",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        448,
+        112
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a social media marketer promoting a digital product on X (Twitter).\n\nProduct name: {{ $json.product_name }}\nDescription: {{ $json.product_description }}\nTarget audience: {{ $json.target_audience }}\nBuy link: {{ $json.buy_link }}\n\nWrite ONE engaging, non-spammy tweet that markets this product to the target audience. Requirements:\n- Under 280 characters TOTAL including the link.\n- Lead with a hook (a pain point, benefit, or bold statement), not \"Check out\".\n- Include the buy link exactly as given.\n- Add 1-2 relevant hashtags.\n- Vary the angle each time so posts do not feel repetitive.\nOutput ONLY the tweet text, nothing else."
+      }
+    },
+    {
+      "id": "f8fbb704-0c39-4608-b307-c54f874d1c55",
+      "name": "AI Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        528,
+        336
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "X4nc9G0Ea3yVhR45",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "id": "c7fc7bdd-7336-487b-8da7-f1d4c1bb287d",
+      "name": "Post to X",
+      "type": "n8n-nodes-base.twitter",
+      "typeVersion": 2,
+      "position": [
+        800,
+        112
+      ],
+      "parameters": {
+        "resource": "tweet",
+        "operation": "create",
+        "text": "={{ $json.text }}"
+      },
+      "credentials": {}
+    }
+  ],
+  "connections": {
+    "Schedule (Mon/Wed/Fri 9am)": {
+      "main": [
+        [
+          {
+            "node": "Product Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Product Details": {
+      "main": [
+        [
+          {
+            "node": "Generate Marketing Post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Marketing Post": {
+      "main": [
+        [
+          {
+            "node": "Post to X",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate Marketing Post",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {},
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": null
+}
